@@ -1,0 +1,206 @@
+//Lakisha Hartline
+
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.Writer;
+
+
+public class VigenereCipher {
+
+      public static String key;
+      public static String plainText;
+      public static String encryptTEXT;
+      public static String k;
+      public static final char[] code = {
+      ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+      'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+      'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '\n'
+    };
+      public static String cipherText = "";
+      public static int[] keyTextIndex;
+      public static int[] plainTextIndex;
+            
+      public VigenereCipher() {
+      
+      }      
+      
+      // Returns the plaintext
+private static String readPlaintextFile() throws java.io.IOException{
+        StringBuffer fileData = new StringBuffer(1000);
+        FileReader file = new FileReader("plain.txt");                
+        BufferedReader reader = new BufferedReader(file);              //Reads the file "plain.txt" in
+        key = reader.readLine();                                      //First line in the file is the key
+        char[] buf = new char[1024];
+        
+        int numRead=0;
+        while((numRead=reader.read(buf)) != -1){
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+            buf = new char[1024];
+        }
+        reader.close();
+        plainText = fileData.toString();
+        plainText = plainText.toUpperCase();
+        return plainText;
+    }
+
+// The key must repeat to the same length as the plaintext
+// Returns the key
+  public static String generateKey(String key) {
+      char[] repeatKey = new char[plainText.length()];
+      int repeat = 0;
+
+      for(int i = 0; i < repeatKey.length; i++) {
+            repeatKey[i] = key.charAt(repeat);
+            if (plainText.charAt(i) == '\n') repeatKey[i] = '\n';
+            if(repeat+1 == key.length()) repeat = 0;
+            else repeat++;
+      }
+      k = new String(repeatKey);
+      return k;
+   }
+
+
+// This is one way you could encrypt the plaintext It's a long way, but it does it's job correctly.
+// First, it adds the plaintext character's number (" " = 0, "A" = 1, .... "Z" = 26, "0" = 27... "9" = 36, "." = 37),
+// the key character's number, and the previous encrypted character's number.
+//
+// Second, it takes the sum of those three numbers and mod it by 38. ( sum mod 38 )
+//
+// Lastly, it takes that number (I use the variable vigenere to represent that number) to our original array code to see
+// what character the plaintext character will now be encrypted to. (ex if vigenere was 2 code[vigenere] = "B")
+//
+// Returns the encrypted text
+public static String encrypt(String plainText, String k)
+{    
+  char[] p;
+      char[] key;
+      p = plainText.toCharArray();
+      key = k.toCharArray();
+      int vigenere = 0;
+      
+    for(int i = 0; i < p.length; i++)
+    {
+         keyTextIndex = new int[key.length];
+         plainTextIndex = new int[p.length];
+        if(p[i] == 'A') plainTextIndex[i] = 1;
+        if(p[i] == 'B') plainTextIndex[i] = 2;
+        if(p[i] == 'C') plainTextIndex[i] = 3;
+        if(p[i] == 'D') plainTextIndex[i] = 4;
+        if(p[i] == 'E') plainTextIndex[i] = 5;
+        if(p[i] == 'F') plainTextIndex[i] = 6;
+        if(p[i] == 'G') plainTextIndex[i] = 7;
+        if(p[i] == 'H') plainTextIndex[i] = 8;
+        if(p[i] == 'I') plainTextIndex[i] = 9;
+        if(p[i] == 'J') plainTextIndex[i] = 10;
+        if(p[i] == 'K') plainTextIndex[i] = 11;
+        if(p[i] == 'L') plainTextIndex[i] = 12;
+        if(p[i] == 'M') plainTextIndex[i] = 13;
+        if(p[i] == 'N') plainTextIndex[i] = 14;
+        if(p[i] == 'O') plainTextIndex[i] = 15;
+        if(p[i] == 'P') plainTextIndex[i] = 16;
+        if(p[i] == 'Q') plainTextIndex[i] = 17;
+        if(p[i] == 'R') plainTextIndex[i] = 18;
+        if(p[i] == 'S') plainTextIndex[i] = 19;
+        if(p[i] == 'T') plainTextIndex[i] = 20;
+        if(p[i] == 'U') plainTextIndex[i] = 21;
+        if(p[i] == 'V') plainTextIndex[i] = 22;
+        if(p[i] == 'W') plainTextIndex[i] = 23;
+        if(p[i] == 'X') plainTextIndex[i] = 24;
+        if(p[i] == 'Y') plainTextIndex[i] = 25;
+        if(p[i] == 'Z') plainTextIndex[i] = 26;
+        if(p[i] == '.') plainTextIndex[i] = 37;
+        if(p[i] == '0') plainTextIndex[i] = 27;
+        if(p[i] == '1') plainTextIndex[i] = 28;
+        if(p[i] == '2') plainTextIndex[i] = 29;
+        if(p[i] == '3') plainTextIndex[i] = 30;
+        if(p[i] == '4') plainTextIndex[i] = 31;
+        if(p[i] == '5') plainTextIndex[i] = 32;
+        if(p[i] == '6') plainTextIndex[i] = 33;
+        if(p[i] == '7') plainTextIndex[i] = 34;
+        if(p[i] == '8') plainTextIndex[i] = 35;
+        if(p[i] == '9') plainTextIndex[i] = 36;
+        if(p[i] == ' ') plainTextIndex[i] = 0;
+        if(p[i] == '\n') plainTextIndex[i] = -1; 
+        if(key[i] == 'A') keyTextIndex[i] = 1;
+        if(key[i] == 'B') keyTextIndex[i] = 2;
+        if(key[i] == 'C') keyTextIndex[i] = 3;
+        if(key[i] == 'D') keyTextIndex[i] = 4;
+        if(key[i] == 'E') keyTextIndex[i] = 5;
+        if(key[i] == 'F') keyTextIndex[i] = 6;
+        if(key[i] == 'G') keyTextIndex[i] = 7;
+        if(key[i] == 'H') keyTextIndex[i] = 8;
+        if(key[i] == 'I') keyTextIndex[i] = 9;
+        if(key[i] == 'J') keyTextIndex[i] = 10;
+        if(key[i] == 'K') keyTextIndex[i] = 11;
+        if(key[i] == 'L') keyTextIndex[i] = 12;
+        if(key[i] == 'M') keyTextIndex[i] = 13;
+        if(key[i] == 'N') keyTextIndex[i] = 14;
+        if(key[i] == 'O') keyTextIndex[i] = 15;
+        if(key[i] == 'P') keyTextIndex[i] = 16;
+        if(key[i] == 'Q') keyTextIndex[i] = 17;
+        if(key[i] == 'R') keyTextIndex[i] = 18;
+        if(key[i] == 'S') keyTextIndex[i] = 19;
+        if(key[i] == 'T') keyTextIndex[i] = 20;
+        if(key[i] == 'U') keyTextIndex[i] = 21;
+        if(key[i] == 'V') keyTextIndex[i] = 22;
+        if(key[i] == 'W') keyTextIndex[i] = 23;
+        if(key[i] == 'X') keyTextIndex[i] = 24;
+        if(key[i] == 'Y') keyTextIndex[i] = 25;
+        if(key[i] == 'Z') keyTextIndex[i] = 26;
+        if(key[i] == '.') keyTextIndex[i] = 37;
+        if(key[i] == '0') keyTextIndex[i] = 27;
+        if(key[i] == '1') keyTextIndex[i] = 28;
+        if(key[i] == '2') keyTextIndex[i] = 29;
+        if(key[i] == '3') keyTextIndex[i] = 30;
+        if(key[i] == '4') keyTextIndex[i] = 31;
+        if(key[i] == '5') keyTextIndex[i] = 32;
+        if(key[i] == '6') keyTextIndex[i] = 33;
+        if(key[i] == '7') keyTextIndex[i] = 34;
+        if(key[i] == '8') keyTextIndex[i] = 35;
+        if(key[i] == '9') keyTextIndex[i] = 36;
+        if(key[i] == ' ') keyTextIndex[i] = 0;
+        if(key[i] == '\n') keyTextIndex[i] = -1; 
+          
+        vigenere = ((plainTextIndex[i] + keyTextIndex[i] + vigenere) % 38);
+        if(vigenere > 38) vigenere = vigenere - 38;
+        if(keyTextIndex[i] == -1 || plainTextIndex[i] == -1) {
+            vigenere = vigenere;
+            cipherText = cipherText + '\n';
+            }
+        cipherText = cipherText + code[vigenere];
+          
+        }
+        
+       return cipherText;
+     
+   }
+   
+   // Creates a new file called "result.txt"
+   // Writes the plaintext, key, and encrypted text in the result file
+   
+   public static void main(String[] args) {
+      
+      try {
+         File myFile = new File("result.txt");
+             String plaintext = "Plaintext: " + VigenereCipher.readPlaintextFile() + "\n";
+             String keytext = "Key: " + VigenereCipher.generateKey(key) + "\n";
+             String encrypted = "Encrypted: " + VigenereCipher.encrypt(plainText, k) + "\n";
+         FileWriter fw = new FileWriter(myFile.getAbsoluteFile());
+         BufferedWriter bw = new BufferedWriter(fw);
+         bw.write(plaintext);
+         bw.write(keytext);
+         bw.write(encrypted);
+         bw.close();
+         
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+     }
+
+   }
